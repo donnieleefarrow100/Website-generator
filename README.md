@@ -7,8 +7,9 @@ Generate a modern, clean, professional website for **any** business in seconds �
 1. **Enter your business type** — free text, any business model works. Autocomplete suggestions help, but you can type anything.
 2. **Enter your business name.**
 3. **Attach a logo (optional)** — drag & drop or browse (PNG, JPG, SVG, WebP). No logo? A clean monogram is designed for you automatically.
-4. Optionally add a tagline, city/service area, phone, and email.
-5. Hit **Generate my website**. The generator researches your business type, then builds a complete site tailored to your industry.
+4. Optionally paste in **real customer reviews** (from the business's Google listing, Yelp, Facebook, etc.) — review text, reviewer name, source, and star rating. They replace the example testimonials on the site. Leave empty to use tasteful example testimonials.
+5. Optionally add a tagline, city/service area, phone, and email.
+6. Hit **Generate my website**. The generator researches your business type, then builds a complete site tailored to your industry.
 
 ### The research step
 

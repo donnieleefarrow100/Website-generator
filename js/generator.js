@@ -134,7 +134,9 @@ function protectionBlock(businessName) {
 
 /**
  * Generate a complete website.
- * @param {object} input - { businessName, businessType, tagline?, city?, phone?, email?, logoDataUrl? }
+ * @param {object} input - { businessName, businessType, tagline?, city?, phone?, email?, logoDataUrl?,
+ *                           reviews?: [{ quote, who?, role?, stars? }] } real reviews (pasted by the
+ *                           user, e.g. from the business's Google listing) replace example testimonials.
  * @param {object} [options] - { protect?: boolean } protect=true builds the watermarked,
  *                             copy-protected client-preview version.
  * @returns {{ html: string, profile: object }}
@@ -167,12 +169,30 @@ function generateWebsite(input, options = {}) {
   const statsHtml = profile.stats.map(([num, label]) => `
         <div class="stat"><span class="stat-num">${esc(num)}</span><span class="stat-label">${esc(label)}</span></div>`).join("");
 
-  const reviewsHtml = profile.reviews.map(([quote, who, role]) => `
+  // Real, user-pasted reviews take priority over the generated examples
+  const customReviews = (input.reviews || []).filter(r => r.quote?.trim());
+  const usingRealReviews = customReviews.length > 0;
+  const reviewsData = usingRealReviews
+    ? customReviews.map(r => ({
+        quote: esc(r.quote.trim()),
+        who: esc(r.who?.trim() || "Verified customer"),
+        role: esc(r.role?.trim() || "Customer review"),
+        stars: Math.min(5, Math.max(1, parseInt(r.stars, 10) || 5)),
+      }))
+    : profile.reviews.map(([quote, who, role]) => ({
+        quote: fill(quote, name, type), who: esc(who), role: esc(role), stars: 5,
+      }));
+
+  const reviewsHtml = reviewsData.map(r => `
         <figure class="review">
-          <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
-          <blockquote>&ldquo;${fill(quote, name, type)}&rdquo;</blockquote>
-          <figcaption><strong>${esc(who)}</strong><span>${esc(role)}</span></figcaption>
+          <div class="stars" aria-label="${r.stars} out of 5 stars">${"★".repeat(r.stars)}${"☆".repeat(5 - r.stars)}</div>
+          <blockquote>&ldquo;${r.quote}&rdquo;</blockquote>
+          <figcaption><strong>${r.who}</strong><span>${r.role}</span></figcaption>
         </figure>`).join("");
+
+  const reviewsSub = usingRealReviews
+    ? `Real reviews from real customers of ${esc(name)}.`
+    : `Don't take our word for it — here's what people say about working with ${esc(name)}.`;
 
   const aboutHtml = profile.about.map(p => `<p>${fill(p, name, type)}</p>`).join("\n          ");
 
@@ -393,9 +413,9 @@ function generateWebsite(input, options = {}) {
 
 <section class="block" id="reviews">
   <div class="wrap">
-    <span class="eyebrow">Testimonials</span>
+    <span class="eyebrow">${usingRealReviews ? "Reviews" : "Testimonials"}</span>
     <h2 class="section-title">What clients are saying</h2>
-    <p class="section-sub">Don't take our word for it — here's what people say about working with ${esc(name)}.</p>
+    <p class="section-sub">${reviewsSub}</p>
     <div class="reviews">${reviewsHtml}
     </div>
   </div>

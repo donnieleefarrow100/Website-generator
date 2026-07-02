@@ -140,6 +140,54 @@ $("logoRemove").addEventListener("click", (e) => { e.stopPropagation(); clearLog
   logoDrop.addEventListener(ev, (e) => { e.preventDefault(); logoDrop.classList.remove("dragover"); }));
 logoDrop.addEventListener("drop", (e) => setLogo(e.dataTransfer.files[0]));
 
+/* ---------- customer reviews (pasted in by the user) ---------- */
+
+const reviewsList = $("reviewsList");
+let reviewRowId = 0;
+
+function addReviewRow(data = {}) {
+  const row = document.createElement("div");
+  row.className = "review-row";
+  row.dataset.id = ++reviewRowId;
+  row.innerHTML = `
+    <textarea class="rv-quote" rows="3" placeholder="Paste the review text here…"></textarea>
+    <div class="review-row-meta">
+      <input type="text" class="rv-who" placeholder="Reviewer name (e.g. John D.)" />
+      <input type="text" class="rv-role" placeholder="Source (e.g. Google review)" />
+      <select class="rv-stars" aria-label="Star rating">
+        <option value="5">★★★★★ (5)</option>
+        <option value="4">★★★★☆ (4)</option>
+        <option value="3">★★★☆☆ (3)</option>
+        <option value="2">★★☆☆☆ (2)</option>
+        <option value="1">★☆☆☆☆ (1)</option>
+      </select>
+      <button type="button" class="rv-remove" title="Remove this review">✕</button>
+    </div>`;
+  row.querySelector(".rv-quote").value = data.quote || "";
+  row.querySelector(".rv-who").value = data.who || "";
+  row.querySelector(".rv-role").value = data.role || "";
+  row.querySelector(".rv-stars").value = data.stars || "5";
+  row.querySelector(".rv-remove").addEventListener("click", () => row.remove());
+  reviewsList.appendChild(row);
+  return row;
+}
+
+$("addReviewBtn").addEventListener("click", () => {
+  const row = addReviewRow();
+  row.querySelector(".rv-quote").focus();
+});
+
+function collectReviews() {
+  return [...reviewsList.querySelectorAll(".review-row")]
+    .map(row => ({
+      quote: row.querySelector(".rv-quote").value.trim(),
+      who: row.querySelector(".rv-who").value.trim(),
+      role: row.querySelector(".rv-role").value.trim(),
+      stars: row.querySelector(".rv-stars").value,
+    }))
+    .filter(r => r.quote);
+}
+
 /* ---------- errors ---------- */
 
 function showError(msg) { formError.textContent = msg; formError.hidden = false; }
@@ -167,6 +215,7 @@ form.addEventListener("submit", async (e) => {
     phone: $("phone").value,
     email: $("email").value,
     logoDataUrl,
+    reviews: collectReviews(),
   };
 
   suggestionsBox.classList.remove("open");
