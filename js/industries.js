@@ -24,11 +24,11 @@ const PALETTES = {
 };
 
 const FONT_PAIRS = {
-  modern:   { heading: "Sora",            body: "Inter",           import: "family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600" },
-  elegant:  { heading: "Playfair Display", body: "Source Sans 3",  import: "family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@400;600" },
-  friendly: { heading: "Plus Jakarta Sans", body: "Inter",         import: "family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600" },
-  bold:     { heading: "Space Grotesk",   body: "Inter",           import: "family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600" },
-  classic:  { heading: "Libre Baskerville", body: "Inter",         import: "family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600" },
+  modern:   { heading: "Sora",            body: "Inter",           caps: true,  import: "family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600" },
+  elegant:  { heading: "Playfair Display", body: "Source Sans 3",  caps: false, import: "family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@400;600" },
+  friendly: { heading: "Plus Jakarta Sans", body: "Inter",         caps: false, import: "family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600" },
+  bold:     { heading: "Space Grotesk",   body: "Inter",           caps: true,  import: "family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600" },
+  classic:  { heading: "Libre Baskerville", body: "Inter",         caps: false, import: "family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600" },
 };
 
 /* Broad business categories — the fallback layer of "research".
