@@ -136,6 +136,50 @@ h1, h2, h3 { font-family: 'Sora', system-ui, sans-serif; line-height: 1.15; }
 .extras summary::-webkit-details-marker { display: none; }
 .extras-grid { padding: 4px 18px 18px; }
 
+/* customer reviews editor */
+.reviews-editor { padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
+.reviews-editor-hint { font-size: 0.83rem; color: var(--muted); }
+
+#reviewsList { display: flex; flex-direction: column; gap: 14px; }
+#reviewsList:empty { display: none; }
+
+.review-row {
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.review-row textarea {
+  font-family: inherit; font-size: 0.95rem; color: var(--text);
+  background: rgba(255, 255, 255, 0.04); border: 1.5px solid var(--line);
+  border-radius: 10px; padding: 10px 12px; outline: none; resize: vertical;
+  transition: border-color 0.15s;
+}
+.review-row textarea::placeholder, .review-row input::placeholder { color: #5c688a; }
+.review-row textarea:focus, .review-row input:focus, .review-row select:focus { border-color: var(--brand); }
+
+.review-row-meta { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 10px; align-items: center; }
+.review-row-meta input, .review-row-meta select {
+  font-family: inherit; font-size: 0.88rem; color: var(--text);
+  background: rgba(255, 255, 255, 0.04); border: 1.5px solid var(--line);
+  border-radius: 10px; padding: 9px 12px; outline: none;
+}
+.review-row-meta select { cursor: pointer; }
+.review-row-meta select option { background: var(--panel-2); }
+
+.rv-remove {
+  background: none; border: 1px solid var(--line); border-radius: 10px;
+  color: var(--muted); font-size: 0.85rem; padding: 8px 12px; cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.rv-remove:hover { color: var(--danger); border-color: var(--danger); }
+
+.add-review-btn {
+  font-family: inherit; font-size: 0.9rem; font-weight: 600; color: var(--brand-2);
+  background: rgba(34, 211, 238, 0.07); border: 1.5px dashed rgba(34, 211, 238, 0.4);
+  border-radius: 12px; padding: 12px; cursor: pointer; width: 100%;
+  transition: background 0.15s, border-color 0.15s;
+}
+.add-review-btn:hover { background: rgba(34, 211, 238, 0.14); border-color: var(--brand-2); }
+
 .form-error {
   color: var(--danger); font-size: 0.9rem; font-weight: 500;
   margin-top: 16px; text-align: center;
@@ -287,6 +331,7 @@ h1, h2, h3 { font-family: 'Sora', system-ui, sans-serif; line-height: 1.15; }
 
 @media (max-width: 700px) {
   .form-grid, .extras-grid { grid-template-columns: 1fr; }
+  .review-row-meta { grid-template-columns: 1fr 1fr; }
   .feature-strip { grid-template-columns: 1fr; }
   .gen-form { padding: 24px 18px; }
   .preview-meta span { display: none; }
