@@ -281,6 +281,11 @@ h1, h2, h3 { font-family: 'Sora', system-ui, sans-serif; line-height: 1.15; }
   border: none; color: #fff; box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
 }
 .toolbar-btn-primary:hover { filter: brightness(1.08); background: linear-gradient(90deg, var(--brand-dark), var(--brand-2)); }
+.toolbar-btn-danger { border-color: rgba(248, 113, 113, 0.5); color: var(--danger); }
+.toolbar-btn-danger:hover { background: rgba(248, 113, 113, 0.12); border-color: var(--danger); }
+.toolbar-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.toolbar-btn:disabled:hover { background: var(--panel-2); border-color: var(--line); }
+.mode-btn.dimmed { opacity: 0.4; cursor: not-allowed; }
 
 .preview-toolbar-center { display: flex; align-items: center; gap: 14px; }
 .device-group { display: flex; gap: 6px; }
@@ -310,6 +315,9 @@ h1, h2, h3 { font-family: 'Sora', system-ui, sans-serif; line-height: 1.15; }
   padding: 9px 18px; font-size: 0.83rem; color: var(--muted);
   background: rgba(99, 102, 241, 0.08); border-bottom: 1px solid var(--line);
   text-align: center;
+}
+.preview-note.note-editing {
+  background: rgba(34, 211, 238, 0.12); color: var(--text); font-weight: 500;
 }
 
 .preview-stage {

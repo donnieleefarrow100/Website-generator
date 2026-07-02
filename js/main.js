@@ -4,7 +4,7 @@
    progress flow, live preview, and download of the final site.
    ============================================================ */
 
-import { generateWebsite } from "./generator.js";
+import { generateWebsite, applyProtection } from "./generator.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -221,6 +221,7 @@ form.addEventListener("submit", async (e) => {
   suggestionsBox.classList.remove("open");
   await runProgress(businessType);
 
+  hasManualEdits = false;
   lastResult = buildBoth(lastInput);
   showPreview();
 });
@@ -254,6 +255,7 @@ async function runProgress(businessType) {
 const MODE_NOTES = {
   protected: "🔒 Client preview — watermarked, with text selection, copy/paste, right-click, image saving, and printing blocked. Host this file at your preview URL to share with clients.",
   final: "✅ Final site — clean and unprotected. Publish this version to the client's domain once they've purchased.",
+  editing: "✏️ Edit mode — click any text on the page and type to change it. When you're done, click “Done editing” and your changes are saved into both the client preview and the final website.",
 };
 
 function showPreview() {
@@ -277,12 +279,88 @@ function renderFrame() {
 /* protected / final mode toggle */
 document.querySelectorAll(".mode-btn").forEach(btn => {
   btn.addEventListener("click", () => {
+    if (editing) return;
     document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     viewMode = btn.dataset.mode;
     if (lastResult) renderFrame();
   });
 });
+
+/* ---------- in-preview text editing ---------- */
+
+let editing = false;
+
+const EDITABLE_SELECTOR = [
+  "h1", "h2", "h3", "p", "li", "blockquote", "a", "button",
+  ".stat-num", ".stat-label", ".eyebrow", ".hero-eyebrow",
+  ".brand-name", ".stars", "figcaption strong", "figcaption span", ".copyright",
+].join(", ");
+
+function setEditingUi(on) {
+  editing = on;
+  $("editBtn").hidden = on;
+  $("applyBtn").hidden = !on;
+  $("discardBtn").hidden = !on;
+  ["regenBtn", "downloadBtn", "downloadPreviewBtn", "backBtn"].forEach(id => { $(id).disabled = on; });
+  document.querySelectorAll(".mode-btn").forEach(b => { b.disabled = on; b.classList.toggle("dimmed", on); });
+  $("previewNote").textContent = on ? MODE_NOTES.editing : MODE_NOTES[viewMode];
+  $("previewNote").classList.toggle("note-editing", on);
+}
+
+function startEditing() {
+  const frame = $("previewFrame");
+
+  const enable = () => {
+    const doc = frame.contentDocument;
+    if (!doc || !doc.body) return;
+
+    const style = doc.createElement("style");
+    style.id = "edit-style";
+    style.textContent = `
+      [contenteditable="true"] { cursor: text; transition: outline-color .12s; outline: 2px dashed transparent; outline-offset: 3px; border-radius: 4px; }
+      [contenteditable="true"]:hover { outline-color: rgba(99, 102, 241, .55); }
+      [contenteditable="true"]:focus { outline: 2px solid #6366f1; background: rgba(99, 102, 241, .06); }
+      html { scroll-behavior: auto; }
+    `;
+    doc.head.appendChild(style);
+
+    doc.querySelectorAll(EDITABLE_SELECTOR).forEach(el => {
+      // Don't make containers editable when a child already is
+      if (!el.closest("form")) el.setAttribute("contenteditable", "true");
+    });
+
+    // While editing, links and buttons must not navigate or submit
+    doc.addEventListener("click", (e) => {
+      if (e.target.closest("a, button")) e.preventDefault();
+    }, true);
+  };
+
+  frame.addEventListener("load", enable, { once: true });
+  frame.srcdoc = lastResult.final.html; // edit the clean version — no watermark in the way
+  setEditingUi(true);
+}
+
+let hasManualEdits = false;
+
+function finishEditing(save) {
+  const frame = $("previewFrame");
+  if (save) {
+    const doc = frame.contentDocument;
+    doc.getElementById("edit-style")?.remove();
+    doc.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute("contenteditable"));
+    const html = "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+    lastResult.final.html = html;
+    lastResult.protected.html = applyProtection(html, lastInput.businessName);
+    hasManualEdits = true;
+  }
+  setEditingUi(false);
+  renderFrame();
+}
+
+$("editBtn").addEventListener("click", startEditing);
+$("applyBtn").addEventListener("click", () => finishEditing(true));
+$("discardBtn").addEventListener("click", () => finishEditing(false));
 
 $("backBtn").addEventListener("click", () => {
   previewView.hidden = true;
@@ -291,6 +369,8 @@ $("backBtn").addEventListener("click", () => {
 });
 
 $("regenBtn").addEventListener("click", async () => {
+  if (hasManualEdits && !confirm("Regenerating will discard the text edits you made to this site. Continue?")) return;
+  hasManualEdits = false;
   previewView.hidden = true;
   await runProgress(lastInput.businessType);
   lastResult = buildBoth(lastInput);
