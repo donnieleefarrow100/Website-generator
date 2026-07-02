@@ -263,7 +263,9 @@ const MATCHERS = [
       if (link) link.setAttribute("href", `https://fonts.googleapis.com/css2?${pair.import}&family=IBM+Plex+Mono:wght@400;500&display=swap`);
       setOverride(doc, "font-override",
         `:root { --heading-font: '${pair.heading}', system-ui, sans-serif; --body-font: '${pair.body}', system-ui, sans-serif; }
-h1, .section-title, .cta h2, .footer-word { text-transform: ${pair.caps ? "uppercase" : "none"}; }`);
+h1, .section-title, .cta h2, .footer-word, .footer-mega { text-transform: ${pair.caps ? "uppercase" : "none"}; }
+.hl { -webkit-text-stroke: 0; color: inherit; font-style: ${pair.caps ? "normal" : "italic"}; }
+.cta .hl { font-style: normal; }`);
       return { ok: true, message: `\u2713 Fonts changed to the ${styleName} pairing (${pair.heading} + ${pair.body}).` };
     },
   },
