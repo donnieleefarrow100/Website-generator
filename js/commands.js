@@ -202,7 +202,7 @@ const MATCHERS = [
     // "change tagline / subheadline to ..."
     match: (t) => t.match(/(?:tagline|slogan|sub\s*headline|subtitle|sub\s*heading|hero\s+(?:sub)?text|text\s+under\s+the\s+headline)\s*(?:to\s+say|to|say|:|=)\s+(.+)/i),
     run: (doc, m) => {
-      const el = doc.querySelector(".hero p");
+      const el = doc.querySelector(".hero p.sub") || doc.querySelector(".hero p");
       if (!el) return { ok: false, message: "Couldn't find the subheadline text." };
       el.textContent = stripQuotes(m[1]);
       return { ok: true, message: `\u2713 Subheadline changed to \u201c${stripQuotes(m[1])}\u201d.` };
@@ -260,9 +260,12 @@ const MATCHERS = [
       const styleName = (m[1] || m[2]).toLowerCase();
       const pair = FONT_PAIRS[styleName];
       const link = doc.querySelector('link[href*="fonts.googleapis.com/css2"]');
-      if (link) link.setAttribute("href", `https://fonts.googleapis.com/css2?${pair.import}&display=swap`);
+      if (link) link.setAttribute("href", `https://fonts.googleapis.com/css2?${pair.import}&family=IBM+Plex+Mono:wght@400;500&display=swap`);
       setOverride(doc, "font-override",
-        `:root { --heading-font: '${pair.heading}', system-ui, sans-serif; --body-font: '${pair.body}', system-ui, sans-serif; }`);
+        `:root { --heading-font: '${pair.heading}', system-ui, sans-serif; --body-font: '${pair.body}', system-ui, sans-serif; }
+h1, .section-title, .cta h2, .footer-word, .footer-mega { text-transform: ${pair.caps ? "uppercase" : "none"}; }
+.hl { -webkit-text-stroke: 0; color: inherit; font-style: ${pair.caps ? "normal" : "italic"}; }
+.cta .hl { font-style: normal; }`);
       return { ok: true, message: `\u2713 Fonts changed to the ${styleName} pairing (${pair.heading} + ${pair.body}).` };
     },
   },
