@@ -5,7 +5,7 @@
    standalone, modern single-page website as an HTML string.
    ============================================================ */
 
-import { PALETTES, FONT_PAIRS, researchBusiness } from "./industries.js";
+import { PALETTES, FONT_PAIRS, researchBusiness } from "./industries.js?v=__BUILD__";
 
 function esc(s) {
   return String(s)

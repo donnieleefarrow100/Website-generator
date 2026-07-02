@@ -22,6 +22,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Stamp cache-busting build version
+        run: |
+          grep -rl '__BUILD__' --include='*.html' --include='*.js' . | xargs -r sed -i "s/__BUILD__/${GITHUB_SHA:0:8}/g"
       - uses: actions/configure-pages@v5
         with:
           enablement: true

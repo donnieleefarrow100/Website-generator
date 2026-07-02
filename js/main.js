@@ -4,8 +4,8 @@
    progress flow, live preview, and download of the final site.
    ============================================================ */
 
-import { generateWebsite, applyProtection } from "./generator.js";
-import { applyCommand } from "./commands.js";
+import { generateWebsite, applyProtection } from "./generator.js?v=__BUILD__";
+import { applyCommand } from "./commands.js?v=__BUILD__";
 
 const $ = (id) => document.getElementById(id);
 

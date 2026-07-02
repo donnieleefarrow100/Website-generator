@@ -13,7 +13,7 @@
    HTML plus a human-readable confirmation message.
    ============================================================ */
 
-import { FONT_PAIRS } from "./industries.js";
+import { FONT_PAIRS } from "./industries.js?v=__BUILD__";
 
 /* ---------- color utilities ---------- */
 
