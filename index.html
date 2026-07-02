@@ -150,6 +150,14 @@
         <button class="toolbar-btn toolbar-btn-primary" id="downloadBtn" title="Clean, unprotected — publish this to the client's domain">⬇ Final website</button>
       </div>
     </div>
+    <form class="command-bar" id="commandBar">
+      <span class="command-icon">✨</span>
+      <input type="text" id="commandInput" autocomplete="off"
+             placeholder='Tell me what to change… e.g. "change headline to …", "make the background blue", "match the logo colors", "move logo to footer"' />
+      <button type="submit" class="toolbar-btn toolbar-btn-primary" id="commandApplyBtn">Apply</button>
+      <button type="button" class="toolbar-btn" id="commandHelpBtn" title="See everything the command box understands">?</button>
+    </form>
+    <div class="command-result" id="commandResult" hidden></div>
     <div class="preview-note" id="previewNote"></div>
     <div class="preview-stage" id="previewStage">
       <iframe id="previewFrame" title="Generated website preview"></iframe>

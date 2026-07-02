@@ -33,6 +33,23 @@ A complete single-page website with:
 
 Preview it at desktop, tablet, and mobile widths, regenerate, edit your details, then download it — no build step, no dependencies.
 
+## The command box — edit by asking
+
+Above the preview there's a command box. Type what you want in plain English and hit Apply:
+
+- `change headline to Building dreams from the ground up`
+- `change tagline to Family-owned since 1998`
+- `change about title to Our story`
+- `change button text to Get a free quote`
+- `change business name to New Name LLC` (updates everywhere, including the watermark)
+- `make the background blue` — any common color name or hex code like `#1e90ff`
+- `change colors to match the logo` — extracts the dominant color from the uploaded logo and re-themes the site
+- `change fonts to elegant` (or modern, friendly, bold, classic)
+- `move logo to footer` / `move logo back to header`
+- `remove the reviews section` (or about, services, stats, contact, banner)
+
+Type `help` (or click **?**) to see the list any time. Command edits are saved into both the client preview and final downloads, same as manual text edits.
+
 ## Editing the site before (re)publishing
 
 Click **✏️ Edit text** in the preview toolbar, then click any text on the page — headlines, paragraphs, services, reviews, buttons, footer — and type your changes directly. Click **✓ Done editing** to save them (or **✕ Discard edits** to throw them away). Your edits are applied to **both** the protected client preview and the clean final site.

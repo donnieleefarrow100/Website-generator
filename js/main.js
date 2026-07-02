@@ -5,6 +5,7 @@
    ============================================================ */
 
 import { generateWebsite, applyProtection } from "./generator.js";
+import { applyCommand } from "./commands.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -302,7 +303,7 @@ function setEditingUi(on) {
   $("editBtn").hidden = on;
   $("applyBtn").hidden = !on;
   $("discardBtn").hidden = !on;
-  ["regenBtn", "downloadBtn", "downloadPreviewBtn", "backBtn"].forEach(id => { $(id).disabled = on; });
+  ["regenBtn", "downloadBtn", "downloadPreviewBtn", "backBtn", "commandInput", "commandApplyBtn"].forEach(id => { $(id).disabled = on; });
   document.querySelectorAll(".mode-btn").forEach(b => { b.disabled = on; b.classList.toggle("dimmed", on); });
   $("previewNote").textContent = on ? MODE_NOTES.editing : MODE_NOTES[viewMode];
   $("previewNote").classList.toggle("note-editing", on);
@@ -361,6 +362,48 @@ function finishEditing(save) {
 $("editBtn").addEventListener("click", startEditing);
 $("applyBtn").addEventListener("click", () => finishEditing(true));
 $("discardBtn").addEventListener("click", () => finishEditing(false));
+
+/* ---------- plain-English command box ---------- */
+
+let resultTimer = null;
+
+function showCommandResult(message, ok) {
+  const box = $("commandResult");
+  box.textContent = message;
+  box.classList.toggle("ok", ok);
+  box.hidden = false;
+  clearTimeout(resultTimer);
+  resultTimer = setTimeout(() => { box.hidden = true; }, ok ? 6000 : 20000);
+}
+
+$("commandBar").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!lastResult || editing) return;
+  const text = $("commandInput").value.trim();
+  if (!text) return;
+
+  $("commandApplyBtn").disabled = true;
+  try {
+    const res = await applyCommand(text, { html: lastResult.final.html, input: lastInput });
+    showCommandResult(res.message, res.ok);
+    if (res.ok && res.html) {
+      lastResult.final.html = res.html;
+      if (res.businessName) lastInput.businessName = res.businessName;
+      lastResult.protected.html = applyProtection(lastResult.final.html, lastInput.businessName);
+      hasManualEdits = true;
+      renderFrame();
+      $("commandInput").value = "";
+      $("previewName").textContent = lastInput.businessName;
+    }
+  } finally {
+    $("commandApplyBtn").disabled = false;
+  }
+});
+
+$("commandHelpBtn").addEventListener("click", async () => {
+  const res = await applyCommand("help", { html: lastResult?.final.html || "<html></html>", input: lastInput || {} });
+  showCommandResult(res.message, false);
+});
 
 $("backBtn").addEventListener("click", () => {
   previewView.hidden = true;
