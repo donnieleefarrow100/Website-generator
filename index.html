@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website Generator — Instant professional websites for any business</title>
+  <meta name="description" content="Enter your business type and name, optionally add a logo, and generate a modern, clean, professional website in seconds. Works for any business." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='2' y='2' width='44' height='44' rx='12' fill='%236366f1'/%3E%3Ctext x='24' y='32' text-anchor='middle' font-family='Arial' font-size='22' font-weight='700' fill='white'%3E✦%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============ Generator form view ============ -->
+  <main class="app" id="formView">
+    <div class="app-inner">
+      <header class="app-header">
+        <div class="app-badge">✦ Website Generator</div>
+        <h1>A professional website for <span class="gradient-text">any business</span>, in seconds</h1>
+        <p>Tell us what your business is and what it's called. We research your industry and build a modern, clean, professional website — logo optional.</p>
+      </header>
+
+      <form class="gen-form" id="genForm" novalidate>
+        <div class="form-grid">
+          <div class="field field-full">
+            <label for="businessType">Business type <span class="req">*</span></label>
+            <input type="text" id="businessType" name="businessType" required
+                   placeholder="e.g. graphic designer, construction company, accounting firm, music producer..."
+                   autocomplete="off" />
+            <div class="type-suggestions" id="typeSuggestions" role="listbox" aria-label="Business type suggestions"></div>
+            <span class="hint">Any business works — type yours and we'll research it.</span>
+          </div>
+
+          <div class="field field-full">
+            <label for="businessName">Business name <span class="req">*</span></label>
+            <input type="text" id="businessName" name="businessName" required placeholder="e.g. Summit Ridge Construction" />
+          </div>
+
+          <div class="field field-full">
+            <label>Logo <span class="optional">(optional)</span></label>
+            <div class="logo-drop" id="logoDrop" tabindex="0" role="button" aria-label="Upload logo">
+              <input type="file" id="logoInput" accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif" hidden />
+              <div class="logo-drop-empty" id="logoDropEmpty">
+                <span class="logo-drop-icon">🖼️</span>
+                <strong>Drop your logo here or click to browse</strong>
+                <span>PNG, JPG, SVG, or WebP — no logo? No problem, we'll design a clean monogram for you.</span>
+              </div>
+              <div class="logo-drop-preview" id="logoDropPreview" hidden>
+                <img id="logoPreviewImg" alt="Logo preview" />
+                <div class="logo-drop-meta">
+                  <strong id="logoFileName"></strong>
+                  <button type="button" class="link-btn" id="logoRemove">Remove</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <details class="extras field-full">
+            <summary>Optional details — tagline, location &amp; contact info</summary>
+            <div class="form-grid extras-grid">
+              <div class="field field-full">
+                <label for="tagline">Tagline / slogan</label>
+                <input type="text" id="tagline" name="tagline" placeholder="e.g. Building dreams from the ground up" />
+              </div>
+              <div class="field">
+                <label for="city">City / service area</label>
+                <input type="text" id="city" name="city" placeholder="e.g. Austin, TX" />
+              </div>
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone" placeholder="e.g. (555) 123-4567" />
+              </div>
+              <div class="field field-full">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="e.g. hello@yourbusiness.com" />
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <p class="form-error" id="formError" hidden></p>
+
+        <button type="submit" class="generate-btn" id="generateBtn">
+          <span class="generate-btn-label">Generate my website</span>
+          <span class="generate-btn-arrow">→</span>
+        </button>
+      </form>
+
+      <ul class="feature-strip">
+        <li><strong>Any industry</strong><span>From graphic design to construction to accounting — and everything in between.</span></li>
+        <li><strong>Researched for you</strong><span>Content, services, and design tailored to your business type.</span></li>
+        <li><strong>Yours to keep</strong><span>Download a single clean HTML file you can host anywhere.</span></li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- ============ Researching / building overlay ============ -->
+  <div class="progress-view" id="progressView" hidden>
+    <div class="progress-card">
+      <div class="progress-spinner"></div>
+      <h2 id="progressTitle">Researching your industry…</h2>
+      <ul class="progress-steps" id="progressSteps">
+        <li data-step="0">Analyzing your business type</li>
+        <li data-step="1">Researching industry best practices</li>
+        <li data-step="2">Selecting design, colors &amp; typography</li>
+        <li data-step="3">Writing professional copy</li>
+        <li data-step="4">Assembling your website</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Preview view ============ -->
+  <div class="preview-view" id="previewView" hidden>
+    <div class="preview-toolbar">
+      <div class="preview-toolbar-left">
+        <button class="toolbar-btn" id="backBtn">← Edit details</button>
+        <div class="preview-meta">
+          <strong id="previewName"></strong>
+          <span id="previewMatch"></span>
+        </div>
+      </div>
+      <div class="preview-toolbar-center">
+        <div class="mode-toggle" role="group" aria-label="Version">
+          <button class="mode-btn active" data-mode="protected" title="Watermarked, copy-protected version to share with your client">🔒 Client preview</button>
+          <button class="mode-btn" data-mode="final" title="Clean version to publish when the client buys">✅ Final site</button>
+        </div>
+        <div class="device-group">
+          <button class="device-btn active" data-device="desktop" title="Desktop preview">🖥️</button>
+          <button class="device-btn" data-device="tablet" title="Tablet preview">💻</button>
+          <button class="device-btn" data-device="mobile" title="Mobile preview">📱</button>
+        </div>
+      </div>
+      <div class="preview-toolbar-right">
+        <button class="toolbar-btn" id="regenBtn">↻ Regenerate</button>
+        <button class="toolbar-btn" id="downloadPreviewBtn" title="Watermarked + copy-protected — host this at your preview URL">⬇ Client preview</button>
+        <button class="toolbar-btn toolbar-btn-primary" id="downloadBtn" title="Clean, unprotected — publish this to the client's domain">⬇ Final website</button>
+      </div>
+    </div>
+    <div class="preview-note" id="previewNote"></div>
+    <div class="preview-stage" id="previewStage">
+      <iframe id="previewFrame" title="Generated website preview"></iframe>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
