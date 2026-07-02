@@ -122,15 +122,23 @@
         </div>
       </div>
       <div class="preview-toolbar-center">
-        <button class="device-btn active" data-device="desktop" title="Desktop preview">🖥️</button>
-        <button class="device-btn" data-device="tablet" title="Tablet preview">💻</button>
-        <button class="device-btn" data-device="mobile" title="Mobile preview">📱</button>
+        <div class="mode-toggle" role="group" aria-label="Version">
+          <button class="mode-btn active" data-mode="protected" title="Watermarked, copy-protected version to share with your client">🔒 Client preview</button>
+          <button class="mode-btn" data-mode="final" title="Clean version to publish when the client buys">✅ Final site</button>
+        </div>
+        <div class="device-group">
+          <button class="device-btn active" data-device="desktop" title="Desktop preview">🖥️</button>
+          <button class="device-btn" data-device="tablet" title="Tablet preview">💻</button>
+          <button class="device-btn" data-device="mobile" title="Mobile preview">📱</button>
+        </div>
       </div>
       <div class="preview-toolbar-right">
         <button class="toolbar-btn" id="regenBtn">↻ Regenerate</button>
-        <button class="toolbar-btn toolbar-btn-primary" id="downloadBtn">⬇ Download website</button>
+        <button class="toolbar-btn" id="downloadPreviewBtn" title="Watermarked + copy-protected — host this at your preview URL">⬇ Client preview</button>
+        <button class="toolbar-btn toolbar-btn-primary" id="downloadBtn" title="Clean, unprotected — publish this to the client's domain">⬇ Final website</button>
       </div>
     </div>
+    <div class="preview-note" id="previewNote"></div>
     <div class="preview-stage" id="previewStage">
       <iframe id="previewFrame" title="Generated website preview"></iframe>
     </div>

@@ -238,7 +238,20 @@ h1, h2, h3 { font-family: 'Sora', system-ui, sans-serif; line-height: 1.15; }
 }
 .toolbar-btn-primary:hover { filter: brightness(1.08); background: linear-gradient(90deg, var(--brand-dark), var(--brand-2)); }
 
-.preview-toolbar-center { display: flex; gap: 6px; }
+.preview-toolbar-center { display: flex; align-items: center; gap: 14px; }
+.device-group { display: flex; gap: 6px; }
+
+.mode-toggle {
+  display: flex; gap: 4px; background: var(--panel-2);
+  border: 1px solid var(--line); border-radius: 12px; padding: 4px;
+}
+.mode-btn {
+  font-family: inherit; font-size: 0.84rem; font-weight: 600; color: var(--muted);
+  background: none; border: none; border-radius: 9px; padding: 7px 14px;
+  cursor: pointer; white-space: nowrap; transition: background 0.15s, color 0.15s;
+}
+.mode-btn:hover { color: var(--text); }
+.mode-btn.active { background: rgba(99, 102, 241, 0.28); color: var(--text); }
 .device-btn {
   font-size: 1.05rem; background: var(--panel-2); border: 1px solid var(--line);
   border-radius: 10px; padding: 7px 12px; cursor: pointer;
@@ -248,6 +261,12 @@ h1, h2, h3 { font-family: 'Sora', system-ui, sans-serif; line-height: 1.15; }
 .device-btn.active { border-color: var(--brand); background: rgba(99, 102, 241, 0.2); }
 
 .preview-toolbar-right { display: flex; gap: 10px; }
+
+.preview-note {
+  padding: 9px 18px; font-size: 0.83rem; color: var(--muted);
+  background: rgba(99, 102, 241, 0.08); border-bottom: 1px solid var(--line);
+  text-align: center;
+}
 
 .preview-stage {
   flex: 1; display: flex; justify-content: center; align-items: stretch;
@@ -262,10 +281,13 @@ h1, h2, h3 { font-family: 'Sora', system-ui, sans-serif; line-height: 1.15; }
 
 /* ---------- responsive ---------- */
 
+@media (max-width: 900px) {
+  .preview-toolbar-center { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; }
+}
+
 @media (max-width: 700px) {
   .form-grid, .extras-grid { grid-template-columns: 1fr; }
   .feature-strip { grid-template-columns: 1fr; }
   .gen-form { padding: 24px 18px; }
-  .preview-toolbar-center { order: 3; width: 100%; justify-content: center; }
   .preview-meta span { display: none; }
 }

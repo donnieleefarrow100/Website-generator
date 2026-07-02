@@ -30,7 +30,26 @@ A complete single-page website with:
 - Call-to-action banner and a contact section with a form
 - Fully responsive layout (desktop / tablet / mobile)
 
-Preview it at desktop, tablet, and mobile widths, regenerate, edit your details, then **download a single self-contained HTML file** (your logo is embedded) that you can host anywhere — no build step, no dependencies.
+Preview it at desktop, tablet, and mobile widths, regenerate, edit your details, then download it — no build step, no dependencies.
+
+## Two versions: client preview vs. final site
+
+Built for a "show the client first, publish when they buy" workflow. Every generated site comes in two downloadable versions, switchable in the preview toolbar:
+
+**🔒 Client preview** (`business-name-client-preview.html`) — for sharing at a preview URL before purchase. Content protection is baked into the file:
+
+- Text selection and copy/paste are disabled (the contact form still works)
+- Right-click / context menu is blocked
+- Images and the logo can't be dragged or saved via drag-out
+- Save (Ctrl+S), print (Ctrl+P), select-all, and view-source shortcuts are blocked; printing produces a blank page
+- A diagonal `PREVIEW · Business Name` watermark tiles the whole page, plus a "Client preview — not for redistribution" badge
+- The watermark self-restores if someone deletes it via devtools
+
+Host this file anywhere (Netlify Drop, Vercel, GitHub Pages, any static host) to get a previewable link for your client.
+
+> Note: no browser-side protection is absolute — a determined person can still screenshot or dig into the source. This layer stops casual copy/paste and content lifting, which covers the realistic risk while a client is deciding.
+
+**✅ Final site** (`business-name.html`) — completely clean, no watermark, no restrictions. When the client buys, publish this version to the permanent domain you purchase from any provider (point the domain at your static host and upload the file as `index.html`).
 
 ## Running it
 

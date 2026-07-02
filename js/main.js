@@ -25,8 +25,9 @@ const logoPreviewImg = $("logoPreviewImg");
 const logoFileName = $("logoFileName");
 
 let logoDataUrl = null;
-let lastResult = null;
+let lastResult = null;   // { final: {html, profile}, protected: {html, profile} }
 let lastInput = null;
+let viewMode = "protected";
 
 /* ---------- business type suggestions ---------- */
 
@@ -171,9 +172,16 @@ form.addEventListener("submit", async (e) => {
   suggestionsBox.classList.remove("open");
   await runProgress(businessType);
 
-  lastResult = generateWebsite(lastInput);
+  lastResult = buildBoth(lastInput);
   showPreview();
 });
+
+function buildBoth(input) {
+  return {
+    final: generateWebsite(input),
+    protected: generateWebsite(input, { protect: true }),
+  };
+}
 
 async function runProgress(businessType) {
   const steps = [...progressView.querySelectorAll(".progress-steps li")];
@@ -194,18 +202,38 @@ async function runProgress(businessType) {
 
 /* ---------- preview ---------- */
 
+const MODE_NOTES = {
+  protected: "🔒 Client preview — watermarked, with text selection, copy/paste, right-click, image saving, and printing blocked. Host this file at your preview URL to share with clients.",
+  final: "✅ Final site — clean and unprotected. Publish this version to the client's domain once they've purchased.",
+};
+
 function showPreview() {
   $("previewName").textContent = lastInput.businessName;
-  const { profile } = lastResult;
+  const { profile } = lastResult.final;
   $("previewMatch").textContent =
     profile.matchType === "industry" ? `Industry research: ${profile.matchLabel}`
     : profile.matchType === "category" ? `Industry research: ${profile.matchLabel} businesses`
     : "Industry research: general professional profile";
 
-  $("previewFrame").srcdoc = lastResult.html;
+  renderFrame();
   formView.hidden = true;
   previewView.hidden = false;
 }
+
+function renderFrame() {
+  $("previewFrame").srcdoc = lastResult[viewMode].html;
+  $("previewNote").textContent = MODE_NOTES[viewMode];
+}
+
+/* protected / final mode toggle */
+document.querySelectorAll(".mode-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    viewMode = btn.dataset.mode;
+    if (lastResult) renderFrame();
+  });
+});
 
 $("backBtn").addEventListener("click", () => {
   previewView.hidden = true;
@@ -216,7 +244,7 @@ $("backBtn").addEventListener("click", () => {
 $("regenBtn").addEventListener("click", async () => {
   previewView.hidden = true;
   await runProgress(lastInput.businessType);
-  lastResult = generateWebsite(lastInput);
+  lastResult = buildBoth(lastInput);
   showPreview();
 });
 
@@ -233,16 +261,23 @@ document.querySelectorAll(".device-btn").forEach(btn => {
 
 /* ---------- download ---------- */
 
-$("downloadBtn").addEventListener("click", () => {
-  if (!lastResult) return;
+function downloadHtml(html, suffix) {
   const slug = lastInput.businessName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "website";
-  const blob = new Blob([lastResult.html], { type: "text/html" });
+  const blob = new Blob([html], { type: "text/html" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${slug}.html`;
+  a.download = `${slug}${suffix}.html`;
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+$("downloadBtn").addEventListener("click", () => {
+  if (lastResult) downloadHtml(lastResult.final.html, "");
+});
+
+$("downloadPreviewBtn").addEventListener("click", () => {
+  if (lastResult) downloadHtml(lastResult.protected.html, "-client-preview");
 });

@@ -57,12 +57,89 @@ function heroArt(palette) {
   </svg>`;
 }
 
+/* ============================================================
+   Content protection for the client-preview version.
+   Blocks text selection, copy/cut, right-click, image dragging,
+   save/print/view-source shortcuts, and overlays a diagonal
+   PREVIEW watermark. This is a strong deterrent for casual
+   copying — the final published version ships without any of it.
+   ============================================================ */
+function protectionBlock(businessName) {
+  const wmText = `PREVIEW · ${businessName.replace(/[<>&"']/g, "")}`;
+  // Diagonal repeating watermark as an inline SVG background
+  const wmSvg = encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="520" height="360"><text x="50%" y="50%" text-anchor="middle" transform="rotate(-27 260 180)" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="rgba(120,120,140,0.13)">${wmText}</text></svg>`
+  );
+
+  const style = `
+<style id="pv-style">
+  body { -webkit-user-select: none; -moz-user-select: none; user-select: none; }
+  input, textarea { -webkit-user-select: text; -moz-user-select: text; user-select: text; }
+  img, svg { -webkit-user-drag: none; user-drag: none; }
+  #pv-watermark {
+    position: fixed; inset: 0; z-index: 2147483646; pointer-events: none;
+    background-image: url("data:image/svg+xml,${wmSvg}");
+    background-repeat: repeat;
+  }
+  #pv-badge {
+    position: fixed; bottom: 16px; right: 16px; z-index: 2147483647;
+    background: rgba(17, 24, 39, 0.92); color: #fff; font-family: Arial, sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+    padding: 9px 16px; border-radius: 999px; pointer-events: none;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+  }
+  @media print { body { display: none !important; } }
+</style>`;
+
+  const script = `
+<script id="pv-script">
+(function () {
+  "use strict";
+  var isFormField = function (t) { return t && t.closest && t.closest("input, textarea"); };
+
+  ["contextmenu", "copy", "cut", "dragstart", "selectstart"].forEach(function (ev) {
+    document.addEventListener(ev, function (e) {
+      if ((ev === "copy" || ev === "cut" || ev === "selectstart") && isFormField(e.target)) return;
+      e.preventDefault();
+      e.stopPropagation();
+    }, true);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    var k = (e.key || "").toLowerCase();
+    var mod = e.ctrlKey || e.metaKey;
+    // copy / select-all / save / print / view-source
+    if (mod && ["c", "x", "a", "s", "u", "p"].indexOf(k) !== -1 && !isFormField(e.target)) { e.preventDefault(); return; }
+    // devtools shortcuts
+    if (e.key === "F12" || (mod && e.shiftKey && ["i", "j", "c", "k"].indexOf(k) !== -1)) { e.preventDefault(); }
+  }, true);
+
+  // Keep the watermark present even if removed via devtools
+  var ensure = function () {
+    if (!document.getElementById("pv-watermark") || !document.getElementById("pv-badge") || !document.getElementById("pv-style")) {
+      location.reload();
+    }
+  };
+  setInterval(ensure, 1500);
+
+  console.log("%cThis is a protected client preview. Content \\u00a9 its owner \\u2014 unauthorized copying is prohibited.", "font-size:14px;font-weight:bold;");
+})();
+<\/script>`;
+
+  const overlay = `<div id="pv-watermark" aria-hidden="true"></div>
+<div id="pv-badge">CLIENT PREVIEW &mdash; NOT FOR REDISTRIBUTION</div>`;
+
+  return { style, script, overlay };
+}
+
 /**
  * Generate a complete website.
  * @param {object} input - { businessName, businessType, tagline?, city?, phone?, email?, logoDataUrl? }
+ * @param {object} [options] - { protect?: boolean } protect=true builds the watermarked,
+ *                             copy-protected client-preview version.
  * @returns {{ html: string, profile: object }}
  */
-function generateWebsite(input) {
+function generateWebsite(input, options = {}) {
   const profile = researchBusiness(input.businessType);
   const palette = PALETTES[profile.palette];
   const fonts = FONT_PAIRS[profile.fonts];
@@ -100,6 +177,8 @@ function generateWebsite(input) {
   const aboutHtml = profile.about.map(p => `<p>${fill(p, name, type)}</p>`).join("\n          ");
 
   const dark = palette.heroMode === "dark";
+
+  const protect = options.protect ? protectionBlock(name) : null;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -241,7 +320,7 @@ function generateWebsite(input) {
     .nav-toggle { display: block; }
     section.block { padding: 64px 0; }
   }
-</style>
+</style>${protect ? protect.style : ""}
 </head>
 <body>
 
@@ -366,6 +445,7 @@ function generateWebsite(input) {
   </div>
 </footer>
 
+${protect ? protect.overlay + protect.script : ""}
 </body>
 </html>`;
 
