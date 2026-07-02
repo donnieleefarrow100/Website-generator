@@ -133,6 +133,18 @@ function protectionBlock(businessName) {
 }
 
 /**
+ * Apply the client-preview protection layer to a finished (clean) site.
+ * Works on any final HTML — including HTML that was edited after generation —
+ * so edits only ever need to be made once, on the clean version.
+ */
+function applyProtection(finalHtml, businessName) {
+  const p = protectionBlock(businessName);
+  return finalHtml
+    .replace("</head>", `${p.style}\n</head>`)
+    .replace("</body>", `${p.overlay}${p.script}\n</body>`);
+}
+
+/**
  * Generate a complete website.
  * @param {object} input - { businessName, businessType, tagline?, city?, phone?, email?, logoDataUrl?,
  *                           reviews?: [{ quote, who?, role?, stars? }] } real reviews (pasted by the
@@ -197,8 +209,6 @@ function generateWebsite(input, options = {}) {
   const aboutHtml = profile.about.map(p => `<p>${fill(p, name, type)}</p>`).join("\n          ");
 
   const dark = palette.heroMode === "dark";
-
-  const protect = options.protect ? protectionBlock(name) : null;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -340,7 +350,7 @@ function generateWebsite(input, options = {}) {
     .nav-toggle { display: block; }
     section.block { padding: 64px 0; }
   }
-</style>${protect ? protect.style : ""}
+</style>
 </head>
 <body>
 
@@ -465,11 +475,10 @@ function generateWebsite(input, options = {}) {
   </div>
 </footer>
 
-${protect ? protect.overlay + protect.script : ""}
 </body>
 </html>`;
 
-  return { html, profile };
+  return { html: options.protect ? applyProtection(html, name) : html, profile };
 }
 
-export { generateWebsite };
+export { generateWebsite, applyProtection };

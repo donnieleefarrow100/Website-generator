@@ -33,6 +33,12 @@ A complete single-page website with:
 
 Preview it at desktop, tablet, and mobile widths, regenerate, edit your details, then download it — no build step, no dependencies.
 
+## Editing the site before (re)publishing
+
+Click **✏️ Edit text** in the preview toolbar, then click any text on the page — headlines, paragraphs, services, reviews, buttons, footer — and type your changes directly. Click **✓ Done editing** to save them (or **✕ Discard edits** to throw them away). Your edits are applied to **both** the protected client preview and the clean final site.
+
+To republish an updated preview link: make your edits, download the new **Client preview** file, and upload it to your host again (on Netlify Drop, drag the new file onto your existing site to update the same link). Same for the final site — download and re-upload to the client's domain.
+
 ## Two versions: client preview vs. final site
 
 Built for a "show the client first, publish when they buy" workflow. Every generated site comes in two downloadable versions, switchable in the preview toolbar:
